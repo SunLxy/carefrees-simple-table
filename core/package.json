@@ -1,0 +1,34 @@
+{
+  "name": "@carefrees/simple-table",
+  "version": "0.0.0",
+  "description": "",
+  "author": "SunLxy <1011771396@qq.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsbb build",
+    "watch": "tsbb watch"
+  },
+  "devDependencies": {
+    "@types/react": "~18.2.15",
+    "@types/react-dom": "~18.2.7",
+    "@types/styled-components": "5.1.34",
+    "react": "~18.2.0",
+    "react-dom": "~18.2.0"
+  },
+  "dependencies": {
+    "file-saver": "2.0.5",
+    "exceljs": "4.4.0",
+    "ali-react-table": "2.6.1",
+    "styled-components": "~6.0.4"
+  }
+}
