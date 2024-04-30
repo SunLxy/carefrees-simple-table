@@ -8,6 +8,7 @@ const Route = () => {
     <React.Fragment>
       <CheckBox checked />
       <CheckBox />
+      <CheckBox indeterminate />
       <CheckBoxGroup value={value} items={['a', 'b', 'c']} onChange={(list) => setValue(list as any[])} />
     </React.Fragment>
   );

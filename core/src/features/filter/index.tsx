@@ -1,7 +1,7 @@
 
 import { TablePipeline, ArtColumn, isLeafNode, collectNodes, internals } from "ali-react-table"
 import { layeredFilter } from "../../utils"
-import { FilterItem } from "../../interface"
+import { FilterItem, ValueType } from "../../interface"
 import styled from "styled-components"
 import { HTMLAttributes } from "react"
 
@@ -38,7 +38,7 @@ export interface FilterHeaderCellProps {
   /**列表数据*/
   items?: string[]
   /**选中数据*/
-  value?: string[]
+  value?: ValueType[]
 }
 
 function DefaultFilterHeaderCell(props: FilterHeaderCellProps) {

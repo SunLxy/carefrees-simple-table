@@ -1,7 +1,8 @@
 import styled, { css } from "styled-components"
+import { ValueType } from "./../../interface"
+import { useMemo } from "react"
 
-
-const CheckBoxWarp = styled.label<{ $checked: boolean }>`
+const CheckBoxWarp = styled.label<{ $checked: boolean, $indeterminate: boolean }>`
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -11,8 +12,7 @@ const CheckBoxWarp = styled.label<{ $checked: boolean }>`
   display: inline-flex;
   align-items: baseline;
   cursor: pointer;
-
-  ${props => props.$checked && css`
+  ${props => props.$checked && !props.$indeterminate && css`
     ${CheckBoxInner}{
       background-color: #1677ff;
       border-color: #1677ff;
@@ -20,6 +20,22 @@ const CheckBoxWarp = styled.label<{ $checked: boolean }>`
         opacity: 1;
         transform: rotate(45deg) scale(1) translate(-50%, -50%);
         transition: all 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46) 0.1s;
+      }
+    }
+  `}
+  ${props => props.$indeterminate && css`
+    ${CheckBoxInner}{
+      background-color: #ffffff;
+      border-color: #d9d9d9;
+      &::after{
+        inset-inline-start: 50%;
+        width: calc(16px / 2);
+        height: calc(16px / 2);
+        background-color: #1677ff;
+        border: 0;
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+        content: "";
       }
     }
   `}
@@ -76,17 +92,34 @@ const CheckBoxInner = styled.span`
     content: "";
     transition: all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6), opacity 0.1s;
   }
-
 `
 
 export interface CheckBoxProps {
+  /**是否选中*/
   checked?: boolean
-  onClick?: React.MouseEventHandler<HTMLLabelElement>
+  indeterminate?: boolean;
+  /**触发事件*/
+  onClick?: (checked: boolean, indeterminate: boolean, event: React.MouseEvent<HTMLLabelElement, MouseEvent>) => void
+
 }
 
 export const CheckBox = (props: CheckBoxProps) => {
-  const { checked = false, onClick } = props
-  return (<CheckBoxWarp onClick={onClick} $checked={checked} className="carefrees-simple-table-check-box">
+  const { checked = false, onClick, indeterminate = false } = props
+  const cls = useMemo(() => {
+    return ['carefrees-simple-table-check-box', checked && 'checked', indeterminate && 'indeterminate'].filter(Boolean).join(' ')
+  }, [indeterminate, checked])
+
+  const onClickItem: React.MouseEventHandler<HTMLLabelElement> = (event) => {
+    event?.preventDefault?.()
+    event?.stopPropagation?.()
+    if (indeterminate) {
+      onClick(true, indeterminate, event)
+    } else {
+      onClick(!checked, indeterminate, event)
+    }
+  }
+
+  return (<CheckBoxWarp onClick={onClickItem} $indeterminate={indeterminate} $checked={checked} className={cls}>
     <CheckBoxBody className="carefrees-simple-table-check-box-body">
       <CheckBoxBase className="carefrees-simple-table-check-box-input" type="checkbox" />
       <CheckBoxInner className="carefrees-simple-table-check-box-inner" />
@@ -113,7 +146,7 @@ const CheckBoxGroupItemTextBase = styled.span`
 `
 
 export interface CheckBoxGroupProps {
-  value?: (string | number | undefined | null)[]
+  value?: ValueType[]
   items?: any[]
   valueField?: string
   labelField?: string
@@ -122,9 +155,7 @@ export interface CheckBoxGroupProps {
 
 export const CheckBoxGroup = (props: CheckBoxGroupProps) => {
   const { items = [], value = [], valueField = 'value', labelField = 'label', onChange } = props
-  const onClick = (event: React.MouseEvent<HTMLLabelElement, MouseEvent>, checked: boolean, item: any, isStringOrNumber: boolean) => {
-    event?.preventDefault?.()
-    event?.stopPropagation?.()
+  const onClick = (checked: boolean, item: any, isStringOrNumber: boolean) => {
     let list: CheckBoxGroupProps['value'] = []
     const valueText = isStringOrNumber ? item : item?.[valueField]
     if (checked) {
@@ -140,8 +171,9 @@ export const CheckBoxGroup = (props: CheckBoxGroupProps) => {
       const isStringOrNumber = typeof item === "string" || typeof item === "number" || typeof item === "boolean"
       const checked = value.includes(isStringOrNumber ? item : item?.[valueField])
       const text = isStringOrNumber ? item : item?.[labelField]
+
       return <CheckBoxGroupItemBase $checked={checked} className="carefrees-simple-table-check-box-group-list-item" key={key} >
-        <CheckBox onClick={(event) => onClick(event, checked, item, isStringOrNumber)} checked={checked} />
+        <CheckBox onClick={() => onClick(checked, item, isStringOrNumber)} checked={checked} />
         <CheckBoxGroupItemTextBase className="carefrees-simple-table-check-box-group-list-item-text">{text}</CheckBoxGroupItemTextBase>
       </CheckBoxGroupItemBase>
     })}
