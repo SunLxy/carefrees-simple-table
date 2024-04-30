@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { CheckBox, CheckBoxGroup } from "@carefrees/simple-table"
+import { CheckBox, CheckBoxGroup, Button } from "@carefrees/simple-table"
 
 const Route = () => {
   const [value, setValue] = useState<any[]>([])
 
   return (
     <React.Fragment>
+      <Button>内容</Button>
       <CheckBox checked />
       <CheckBox />
       <CheckBox indeterminate />

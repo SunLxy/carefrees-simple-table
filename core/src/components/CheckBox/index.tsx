@@ -2,7 +2,7 @@ import styled, { css } from "styled-components"
 import { ValueType } from "./../../interface"
 import { useMemo } from "react"
 
-const CheckBoxWarp = styled.label<{ $checked: boolean, $indeterminate: boolean }>`
+const CheckBoxWarp = styled.label<{ $checked: boolean, $indeterminate: boolean, $disabled: boolean }>`
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -39,6 +39,10 @@ const CheckBoxWarp = styled.label<{ $checked: boolean, $indeterminate: boolean }
       }
     }
   `}
+  ${props => props.$disabled && css`
+      opacity: 0.8;
+  `}
+
 `
 
 const CheckBoxBody = styled.span`
@@ -99,12 +103,12 @@ export interface CheckBoxProps {
   checked?: boolean
   indeterminate?: boolean;
   /**触发事件*/
-  onClick?: (checked: boolean, indeterminate: boolean, event: React.MouseEvent<HTMLLabelElement, MouseEvent>) => void
-
+  onClick?: (event: React.MouseEvent<HTMLLabelElement, MouseEvent>, checked: boolean, indeterminate: boolean,) => void
+  disabled?: boolean
 }
 
 export const CheckBox = (props: CheckBoxProps) => {
-  const { checked = false, onClick, indeterminate = false } = props
+  const { checked = false, onClick, indeterminate = false, disabled = false } = props
   const cls = useMemo(() => {
     return ['carefrees-simple-table-check-box', checked && 'checked', indeterminate && 'indeterminate'].filter(Boolean).join(' ')
   }, [indeterminate, checked])
@@ -112,14 +116,17 @@ export const CheckBox = (props: CheckBoxProps) => {
   const onClickItem: React.MouseEventHandler<HTMLLabelElement> = (event) => {
     event?.preventDefault?.()
     event?.stopPropagation?.()
+    if (disabled) {
+      return
+    }
     if (indeterminate) {
-      onClick?.(true, indeterminate, event)
+      onClick?.(event, true, indeterminate)
     } else {
-      onClick?.(!checked, indeterminate, event)
+      onClick?.(event, !checked, indeterminate,)
     }
   }
 
-  return (<CheckBoxWarp onClick={onClickItem} $indeterminate={indeterminate} $checked={checked} className={cls}>
+  return (<CheckBoxWarp onClick={onClickItem} $disabled={disabled} $indeterminate={indeterminate} $checked={checked} className={cls}>
     <CheckBoxBody className="carefrees-simple-table-check-box-body">
       <CheckBoxBase className="carefrees-simple-table-check-box-input" type="checkbox" />
       <CheckBoxInner className="carefrees-simple-table-check-box-inner" />
