@@ -101,9 +101,11 @@ const CheckBoxInner = styled.span`
 export interface CheckBoxProps {
   /**是否选中*/
   checked?: boolean
+  /**是否半选*/
   indeterminate?: boolean;
   /**触发事件*/
   onClick?: (event: React.MouseEvent<HTMLLabelElement, MouseEvent>, checked: boolean, indeterminate: boolean,) => void
+  /**是否禁用*/
   disabled?: boolean
 }
 
