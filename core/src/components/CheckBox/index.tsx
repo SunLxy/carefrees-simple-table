@@ -113,9 +113,9 @@ export const CheckBox = (props: CheckBoxProps) => {
     event?.preventDefault?.()
     event?.stopPropagation?.()
     if (indeterminate) {
-      onClick(true, indeterminate, event)
+      onClick?.(true, indeterminate, event)
     } else {
-      onClick(!checked, indeterminate, event)
+      onClick?.(!checked, indeterminate, event)
     }
   }
 
