@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckBox, CheckBoxGroup, Button, useTablePipeline, BaseTable, ArtColumn, filter } from "@carefrees/simple-table"
+import { CheckBox, CheckBoxGroup, Button, useTablePipeline, BaseTable, ArtColumn, filter, exportExcel } from "@carefrees/simple-table"
 
 const dataSource: any[] = [
   { name: "1", name2: "2", name3: "3" },
@@ -31,16 +31,18 @@ const Route = () => {
     .primaryKey('id') // 每一行数据由 id 字段唯一标记
     .use(filter())
 
+  const tableProps = pipeline.getProps()
+
 
   return (
     <React.Fragment>
-      <Button>内容</Button>
+      <Button onClick={() => exportExcel({ columns: tableProps.columns, dataSource: tableProps.dataSource })} >导出</Button>
       <CheckBox checked />
       <CheckBox />
       <CheckBox indeterminate />
       <CheckBoxGroup value={value} items={['a', 'b', 'c']} onChange={(list) => setValue(list as any[])} />
 
-      <BaseTable  {...pipeline.getProps()} />
+      <BaseTable  {...tableProps} />
 
 
     </React.Fragment>
