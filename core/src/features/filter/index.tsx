@@ -3,7 +3,23 @@ import { TablePipeline, ArtColumn, isLeafNode, collectNodes, internals } from "a
 import { layeredFilter } from "../../utils"
 import { FilterItem, ValueType } from "../../interface"
 import styled from "styled-components"
-import { HTMLAttributes } from "react"
+import { HTMLAttributes, useMemo, useState } from "react"
+import Tooltip from "rc-tooltip"
+import "rc-tooltip/assets/bootstrap.css"
+import "./index.css";
+import { CheckBoxGroup } from "../../components/CheckBox"
+
+const ListGroupBase = styled.div`
+`
+const ListGroupBodyBase = styled.div`
+  padding: 8px 10px;
+  box-sizing: border-box;
+`
+const ListGroupFooterBase = styled.div`
+  border-top: 1px solid #d9d9d9;
+  padding: 8px 10px;
+  box-sizing: border-box;
+`
 
 const TableHeaderCell = styled.div`
   display: flex;
@@ -28,13 +44,12 @@ function FilterIcon(props: HTMLAttributes<HTMLOrSVGElement>) {
 
 
 export interface FilterHeaderCellProps {
-
   /** 在添加排序相关的内容之前 表头原有的渲染内容 */
   children?: React.ReactNode
   /** 当前列的配置 */
   column?: ArtColumn
   /** 选中的回调 */
-  onClick?(item: any): void
+  onSave?(items: any[]): void
   /**列表数据*/
   items?: string[]
   /**选中数据*/
@@ -42,36 +57,62 @@ export interface FilterHeaderCellProps {
 }
 
 function DefaultFilterHeaderCell(props: FilterHeaderCellProps) {
-  const { children, value, items = [] } = props
+  const { children, value, items = [], onSave, } = props
 
-  const set = new Set(value)
-  const isAllChecked = items.length > 0 && items.every((key) => set.has(key))
-  const isAnyChecked = items.some((key) => set.has(key))
+  const [tempValue, setTempValue] = useState(value)
 
-  /**
-   * 点击图标
-  */
-  const onClickIcon = (event: React.MouseEvent<HTMLOrSVGElement, MouseEvent>) => {
-    event?.stopPropagation?.()
-    event?.preventDefault?.()
+  const activeStyle = useMemo(() => {
+    if (Array.isArray(value) && value.length) {
+      return { color: "#1677ff" }
+    }
+    return {}
+  }, [props.value])
 
-
+  const onVisibleChange = (visible: boolean) => {
+    if (!visible) {
+      if (tempValue !== value) {
+        onSave?.([...tempValue])
+      }
+    }
   }
 
   return <TableHeaderCell>
     {children}
-    <FilterIcon onClick={onClickIcon} />
+    <Tooltip
+      overlayClassName='carefrees-simple-table-tooltip-overlay'
+      onVisibleChange={onVisibleChange}
+      placement="bottom"
+      trigger={['click']}
+      overlay={(<ListGroupBase>
+        <ListGroupBodyBase>
+          <CheckBoxGroup
+            items={items}
+            value={tempValue}
+            onChange={(list) => setTempValue(list)}
+          />
+        </ListGroupBodyBase>
+      </ListGroupBase>)}
+    >
+      <FilterIcon style={activeStyle} />
+    </Tooltip>
   </TableHeaderCell>
 }
 
-
-
 export interface FilterFeatureOptions {
   /** 更新过滤字段列表的回调函数 */
-  onChangeFilter?(nextFilter: FilterItem[]): void
+  onChangeFilter?(nextFilter: FilterItem[], code: string): void
 }
 
-export function filter(options: FilterFeatureOptions) {
+export type ArtColumnFeaturesFilter =
+  ((itemData: any, value: FilterItem['value'], column: ArtColumn) => boolean)
+  | {
+    /**表格行数据*/
+    items?: string[]
+    /**过滤数据*/
+    onFilter?: (itemData: any, value: FilterItem['value'], column: ArtColumn) => boolean
+  }
+
+export function filter(options: FilterFeatureOptions = {}) {
 
   return (pipeline: TablePipeline) => {
 
@@ -83,9 +124,16 @@ export function filter(options: FilterFeatureOptions) {
     pipeline.columns(processColumns(columns)) // 处理表头渲染过滤渲染
     pipeline.dataSource(processDataSource(dataSource)) // 处理渲染数据
 
+    const onChangeValues = (code: string, values: ValueType[]) => {
+      const list = (pipeline.getStateAtKey("filter") || []).filter((ite: FilterItem) => ite.code !== code);
+      const newList = [...list].concat({ code, value: values })
+      options?.onChangeFilter?.(newList, code)
+      pipeline.setStateAtKey('filter', newList)
+    }
+
     return pipeline
 
-    // 列表数据处理
+    /**列表数据处理*/
     function processDataSource(dataSource: any[]) {
 
       const filterColumnsMap = new Map(
@@ -104,15 +152,15 @@ export function filter(options: FilterFeatureOptions) {
             newItem = filter(newItem, element.value, column)
           } else {
             const value = newItem[element.code]
+            const newValue = (element.value || [])
             const finx = (element.value || []).includes(value)
             // 找不到相等数据的时候
-            if (!finx) {
+            if (!finx && newValue.length) {
               newItem = false
               break;
             }
           }
         }
-
         return !!newItem
       })
     }
@@ -128,7 +176,12 @@ export function filter(options: FilterFeatureOptions) {
           if (!filterTable?.items) {
             items = Array.from(new Set(dataSource.map((ite) => ite[col.code]))).filter((it => (it !== undefined && it !== null)))
           }
-          result.title = (<DefaultFilterHeaderCell items={items} >
+          const valueItem = inputFilter.find(ite => ite.code === col.code)
+          result.title = (<DefaultFilterHeaderCell
+            value={valueItem?.value || []}
+            onSave={(values) => onChangeValues(col.code, values)}
+            items={items}
+          >
             {internals.safeRenderHeader(col)}
           </DefaultFilterHeaderCell>)
         }
