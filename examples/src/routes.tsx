@@ -11,11 +11,60 @@ const columns: ArtColumn[] = [
   {
     code: "name",
     name: "name",
+    width: 100,
     features: { filter: true }
   },
   {
-    code: "name2",
-    name: "name2",
+    name: "names",
+    children: [
+      {
+        code: "name2",
+        name: "name2",
+        width: 200,
+        children: [
+          {
+            code: "name2",
+            name: "name2",
+            width: 200,
+          },
+          {
+            code: "name2",
+            name: "name2",
+            width: 200,
+          }
+        ]
+      },
+      {
+        code: "name2",
+        name: "name2",
+        width: 200,
+      },
+      {
+        code: "name2",
+        name: "name2",
+        width: 200,
+      }
+    ]
+  },
+  {
+    name: "names1",
+    children: [
+      {
+        code: "name2",
+        name: "name2",
+        width: 200,
+      },
+      {
+        code: "name2",
+        name: "name2",
+        width: 200,
+      },
+      {
+        code: "name2",
+        name: "name2",
+        width: 200,
+      }
+    ]
   },
   {
     code: "name3",
