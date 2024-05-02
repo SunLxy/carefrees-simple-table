@@ -5,3 +5,5 @@ yarn.lock
 lib
 
 package-lock.json
+
+dist
