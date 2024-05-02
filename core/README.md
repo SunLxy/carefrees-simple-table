@@ -9,7 +9,7 @@
 ## 安装
 
 ```bash
-$ npm install @carefrees/simple-table # yarn add @carefrees/simple-table
+$ yarn add @carefrees/simple-table # npm install @carefrees/simple-table
 ```
 
 ## 引入
