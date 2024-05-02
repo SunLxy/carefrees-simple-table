@@ -1,6 +1,6 @@
 {
   "name": "@carefrees/simple-table",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "",
   "author": "SunLxy <1011771396@qq.com>",
   "homepage": "",
@@ -27,10 +27,10 @@
     "react-dom": "~18.2.0"
   },
   "dependencies": {
-    "rc-tooltip": "6.2.0",
-    "file-saver": "2.0.5",
-    "exceljs": "4.4.0",
     "ali-react-table": "2.6.1",
+    "exceljs": "4.4.0",
+    "file-saver": "2.0.5",
+    "rc-tooltip": "6.2.0",
     "styled-components": "~6.0.4"
   }
 }
