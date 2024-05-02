@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { CheckBox, CheckBoxGroup, Button, useTablePipeline, BaseTable, ArtColumn, filter, exportExcel } from "@carefrees/simple-table"
 
 const dataSource: any[] = [
-  { name: "1", name2: "2", name3: "3" },
-  { name: "0", name2: "2", name3: "3" },
-  { name: "3", name2: "2", name3: "3" },
+  { name: "1", name2: "2", name3: "3", name22: "name22" },
+  { name: "0", name2: "2", name3: "3", name22: "name22" },
+  { name: "3", name2: "2", name3: "3", name22: "name22" },
 ]
 
 const columns: ArtColumn[] = [
@@ -12,7 +12,14 @@ const columns: ArtColumn[] = [
     code: "name",
     name: "name",
     width: 100,
-    features: { filter: true }
+    features: { filter: true },
+    getSpanRect: (value, row, rowIndex) => {
+      const top = 0;
+      const left = 0;
+      const bottom = 3;
+      const right = 1;
+      return { top, left, bottom, right }
+    }
   },
   {
     name: "names",
@@ -26,6 +33,13 @@ const columns: ArtColumn[] = [
             code: "name2",
             name: "name2",
             width: 200,
+            getSpanRect: (value, row, rowIndex) => {
+              const top = rowIndex;
+              const left = 1;
+              const bottom = rowIndex + 1;
+              const right = 3;
+              return { top, left, bottom, right }
+            }
           },
           {
             code: "name2",
@@ -35,9 +49,20 @@ const columns: ArtColumn[] = [
         ]
       },
       {
-        code: "name2",
-        name: "name2",
+        code: "name22",
+        name: "name22",
         width: 200,
+        getSpanRect: (value, row, rowIndex) => {
+          let top = rowIndex;
+          const left = 3;
+          let bottom = rowIndex + 1;
+          const right = 4;
+          if (rowIndex === 1 || rowIndex === 0) {
+            top = 0
+            bottom = 2
+          }
+          return { top, left, bottom, right }
+        }
       },
       {
         code: "name2",

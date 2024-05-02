@@ -114,18 +114,42 @@ export const exportExcel = (options: ExportExcelProps) => {
     const { columns = [], dataSource = [], fileName = 'data', fileExt = 'xlsx', } = options
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('main');
+
+    // headerLevel 头部行数 
+    // isFilter 是否存在过滤
+    // lastColumns 渲染列
     const { headerLevel, isFilter, lastColumns } = createHeader(worksheet, columns)
     const lg = dataSource.length
     const lastColumnsLg = lastColumns.length;
-    for (let index = 0; index < lg; index++) {
-      const itemData = dataSource[index];
+    /**记录已经合并的单元格*/
+    const mergeCellData = new Set([])
+    for (let rowIndex = 0; rowIndex < lg; rowIndex++) {
+      const itemData = dataSource[rowIndex];
       // 行
-      const row = worksheet.getRow(index + headerLevel + 1)
+      const row = worksheet.getRow(rowIndex + headerLevel + 1)
       for (let k = 0; k < lastColumnsLg; k++) {
         // 单元格
         const cell = row.getCell(k + 1)
         const column = lastColumns[k];
         cell.value = itemData[column.code]
+        if (typeof column.getSpanRect === "function") {
+          const spanRect = column.getSpanRect(itemData[column.code], itemData, rowIndex);
+          try {
+            let top = spanRect.top + headerLevel + 1 // 获取合并开始行
+            let left = spanRect.left + 1; // 开始合并列
+            let bottom = headerLevel + spanRect.bottom // 结束合并行
+            let right = spanRect.right; // 结束合并列
+            // 这个不能使用 0 开始
+            const key = `${top}_${left}_${bottom}_${right}`
+            if (!mergeCellData.has(key)) {
+              mergeCellData.add(key)
+              worksheet.mergeCells(top, left, bottom, right);
+              worksheet.getCell(top, left).style.alignment = { vertical: "middle" }
+            }
+          } catch (error) {
+            console.log(error)
+          }
+        }
       }
     }
     if (isFilter) {
