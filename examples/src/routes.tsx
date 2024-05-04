@@ -1,10 +1,46 @@
-import React, { useState } from 'react';
-import { CheckBox, CheckBoxGroup, Button, useTablePipeline, BaseTable, ArtColumn, filter, exportExcel } from "@carefrees/simple-table"
+import React from 'react';
+import { Button, useTablePipeline, BaseTable, ArtColumn, filter, exportExcel, features } from "@carefrees/simple-table"
 
 const dataSource: any[] = [
-  { name: "1", name2: "2", name3: "3", name22: "name22" },
-  { name: "0", name2: "2", name3: "3", name22: "name22" },
-  { name: "3", name2: "2", name3: "3", name22: "name22" },
+  { id: "1", name: "1", name2: "2", name3: "3", name22: "name22" },
+  { id: "2", name: "0", name2: "2", name3: "3", name22: "name22" },
+  { id: "3", name: "3", name2: "2", name3: "3", name22: "name22" },
+]
+
+const dataSource2: any[] = [
+  {
+    id: "1",
+    name: "分组1",
+    name2: "分组1",
+    children: [
+      { id: "2", name: "分组1-1", name2: "分组1-1-1", name3: "分组1-1-3", name22: "分组1-1-4", },
+      { id: "3", name: "分组1-2", name2: "分组1-2-1", name3: "分组1-2-3", name22: "分组1-2-4", }
+    ]
+  },
+  {
+    id: "4",
+    name: "分组2",
+    name2: "分组2",
+    children: [
+      { id: "5", name: "分组2-1", name2: "分组2-1-2", name3: "分组2-1-3", name22: "分组2-1-4", },
+      { id: "6", name: "分组2-2", name2: "分组2-2-2", name3: "分组2-2-3", name22: "分组2-2-4", }
+    ]
+  },
+]
+
+const columns2: ArtColumn[] = [
+  {
+    code: "name",
+    name: "name",
+  },
+  {
+    name: "name2",
+    code: "name2",
+  },
+  {
+    code: "name3",
+    name: "name3",
+  }
 ]
 
 const columns: ArtColumn[] = [
@@ -98,27 +134,29 @@ const columns: ArtColumn[] = [
 ]
 
 const Route = () => {
-  const [value, setValue] = useState<any[]>([])
+  // const [value, setValue] = useState<any[]>([])
 
   const pipeline = useTablePipeline()
     .input({ dataSource, columns })
     .primaryKey('id') // 每一行数据由 id 字段唯一标记
     .use(filter())
-
   const tableProps = pipeline.getProps()
 
+  const pipeline2 = useTablePipeline()
+    .input({ dataSource: dataSource2, columns: columns2 })
+    .primaryKey('id') // 每一行数据由 id 字段唯一标记
+    .use(features.rowGrouping({ defaultOpenAll: true }))
+
+  const tableProps2 = pipeline2.getProps()
 
   return (
     <React.Fragment>
-      <Button onClick={() => exportExcel({ columns: tableProps.columns, dataSource: tableProps.dataSource })} >导出</Button>
-      <CheckBox checked />
-      <CheckBox />
-      <CheckBox indeterminate />
-      <CheckBoxGroup value={value} items={['a', 'b', 'c']} onChange={(list) => setValue(list as any[])} />
-
+      <hr />
+      <Button onClick={() => exportExcel({ columns: tableProps.columns, dataSource: tableProps.dataSource, })} >基础表格导出</Button>
       <BaseTable  {...tableProps} />
-
-
+      <hr />
+      <Button onClick={() => exportExcel({ columns: columns2, dataSource: dataSource2, groupColumns: [{ code: "name2", name: "name2" }] })}  >分组表格导出</Button>
+      <BaseTable  {...tableProps2} />
     </React.Fragment>
   );
 };
