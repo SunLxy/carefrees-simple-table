@@ -1,9 +1,9 @@
 {
   "name": "@carefrees/simple-table",
   "version": "0.0.2",
-  "description": "",
+  "description": "基于[ali-react-table](https://github.com/alibaba/ali-react-table)进行添加功能",
   "author": "SunLxy <1011771396@qq.com>",
-  "homepage": "",
+  "homepage": "https://sunlxy.github.io/carefrees-simple-table",
   "license": "ISC",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
