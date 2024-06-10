@@ -101,6 +101,8 @@ function DefaultFilterHeaderCell(props: FilterHeaderCellProps) {
 export interface FilterFeatureOptions {
   /** 更新过滤字段列表的回调函数 */
   onChangeFilter?(nextFilter: FilterItem[], code: string): void
+  filterItems?: FilterItem[]
+
 }
 
 export type ArtColumnFeaturesFilter =
@@ -115,9 +117,8 @@ export type ArtColumnFeaturesFilter =
 export function filter(options: FilterFeatureOptions = {}) {
 
   return (pipeline: TablePipeline) => {
-
     /**获取过滤参数  */
-    const inputFilter: FilterItem[] = pipeline.getStateAtKey("filter") || []
+    const inputFilter: FilterItem[] = pipeline.getStateAtKey("filter") || options?.filterItems || []
 
     const dataSource = pipeline.getDataSource() // 获取数据
     const columns = pipeline.getColumns() //获取列
