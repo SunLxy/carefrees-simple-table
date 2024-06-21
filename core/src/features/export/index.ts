@@ -1,4 +1,4 @@
-import ExcelJS, { Workbook, Worksheet } from "exceljs"
+import ExcelJS, { Worksheet } from "exceljs"
 import { saveAs } from 'file-saver';
 import { ArtColumn } from "ali-react-table"
 

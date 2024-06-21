@@ -7,6 +7,7 @@
   ],
   "scripts": {
     "build": "npm run-script build --workspace @carefrees/simple-table",
+    "watch": "npm run-script watch --workspace @carefrees/simple-table",
     "website": "npm run-script build --workspace examples",
     "start": "npm run-script start --workspace examples",
     "version": "lerna version --exact --force-publish --no-push --no-git-tag-version"

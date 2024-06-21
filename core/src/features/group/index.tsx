@@ -65,12 +65,15 @@ export function CustomGroup(options: GroupFeatureOptions = {}) {
        * 2. 在首列添加列宽为0的分组列，为了展示分组的数据
       */
       const newColums = columns.filter((it) => !customGroupColumns.find((item) => item.code === it.code));
+      // const first = newColums.shift()
       const length = columns.length;
       const indent = iconIndent + (customGroupColumns.length * indentSize);
+
       const customGroupItem: ArtColumn = {
         name: "",
         code: "__custom_group__",
-        width: indent + iconWidth + iconGap,
+        width: indent + iconWidth + iconGap + iconWidth,
+        lock: true,
         getSpanRect: (value, row, rowIndex) => {
           if (row.___isGroup) {
             return { top: rowIndex, left: 0, bottom: rowIndex + 1, right: length }
@@ -86,9 +89,33 @@ export function CustomGroup(options: GroupFeatureOptions = {}) {
             return value
           }
           return value
-        }
+        },
+        getCellProps(value, row, rowIndex) {
+          return {
+            className: "careress__custom_group__lock_td"
+          }
+        },
       }
+      // const firstCustomItem: ArtColumn = {
+      //   ...first,
+      //   getSpanRect: (value, row, rowIndex) => {
+      //     if (row.___isGroup) {
+      //       return { top: rowIndex, left: 0, bottom: rowIndex + 1, right: length + 2 }
+      //     } else if (first.getSpanRect) {
+      //       return first.getSpanRect(value, row, rowIndex)
+      //     }
+      //     return { top: rowIndex, left: 1, bottom: rowIndex + 1, right: 2 }
+      //   },
+      //   render: (value, row, rowIndex) => {
+      //     let customText = value
+      //     if (row.___isGroup) {
+      //       return <Fragment />
+      //     }
+      //     return customText
+      //   },
+      // }
       return [customGroupItem].concat(newColums)
+      // return [].concat(newColums)
     }
   }
 
