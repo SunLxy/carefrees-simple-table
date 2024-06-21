@@ -57,7 +57,7 @@ const Route = () => {
   console.log('tableProps3', tableProps3)
   return (
     <React.Fragment>
-      <BaseTable  {...tableProps3} />
+      <BaseTable isCustomGroup  {...tableProps3} />
     </React.Fragment>
   );
 };

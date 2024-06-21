@@ -69,6 +69,7 @@ export function CustomGroup(options: GroupFeatureOptions = {}) {
       const length = columns.length;
       const indent = iconIndent + (customGroupColumns.length * indentSize);
 
+
       const customGroupItem: ArtColumn = {
         name: "",
         code: "__custom_group__",
@@ -96,26 +97,7 @@ export function CustomGroup(options: GroupFeatureOptions = {}) {
           }
         },
       }
-      // const firstCustomItem: ArtColumn = {
-      //   ...first,
-      //   getSpanRect: (value, row, rowIndex) => {
-      //     if (row.___isGroup) {
-      //       return { top: rowIndex, left: 0, bottom: rowIndex + 1, right: length + 2 }
-      //     } else if (first.getSpanRect) {
-      //       return first.getSpanRect(value, row, rowIndex)
-      //     }
-      //     return { top: rowIndex, left: 1, bottom: rowIndex + 1, right: 2 }
-      //   },
-      //   render: (value, row, rowIndex) => {
-      //     let customText = value
-      //     if (row.___isGroup) {
-      //       return <Fragment />
-      //     }
-      //     return customText
-      //   },
-      // }
       return [customGroupItem].concat(newColums)
-      // return [].concat(newColums)
     }
   }
 

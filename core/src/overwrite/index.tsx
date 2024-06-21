@@ -8,6 +8,13 @@ const ArtTableStyled = styled(ArtBaseTable)`
     position: sticky;
     left: var(--custom_group-cell-padding-left);
   }
+  &.carefress-simple-table-base.custom_group .art-lock-shadow-mask {
+    .art-lock-shadow.art-left-lock-shadow{
+        box-shadow:none;
+        border-right: 0px;
+        border-left:var(--cell-border-vertical) ;
+    }
+  }
 `
 
 export interface BaseTableProps extends BaseTablePropsType {
@@ -15,13 +22,17 @@ export interface BaseTableProps extends BaseTablePropsType {
     /**分组固定列*/
     '--custom_group-cell-padding-left'?: string
   }
+  /**自定义分组*/
+  isCustomGroup?: boolean
+
 }
 
 export const BaseTable = forwardRef<ArtBaseTable, BaseTableProps>((props, ref) => {
+  const { isCustomGroup, ...rest } = props
   return <ArtTableStyled
-    {...props}
+    {...rest}
     ref={ref}
-    className={`carefress-simple-table-base ${props.className || ''}`}
+    className={`carefress-simple-table-base ${isCustomGroup ? "custom_group" : ""} ${props.className || ''}`}
     style={{ "--custom_group-cell-padding-left": '13px', ...props.style } as any}
     getRowProps={(row, rowindex) => {
       let rowProps: React.HTMLAttributes<HTMLTableRowElement> = {}

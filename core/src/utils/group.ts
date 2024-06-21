@@ -27,6 +27,7 @@ export function layeredGroup<T extends AbstractTreeNode>(array: T[], oldGroup: A
     const groupByKeys = Object.keys(groupData);
     const lg = groupByKeys.length
     const newArray: T[] = []
+
     for (let index = 0; index < lg; index++) {
       const itemKey = groupByKeys[index];
       const groupItemList = (groupData[itemKey] || []).map((item: ArtColumn) => {
@@ -41,6 +42,7 @@ export function layeredGroup<T extends AbstractTreeNode>(array: T[], oldGroup: A
         newArray.push({
           children: list,
           __custom_group__: value,
+          [firstGroupItem.code]: value,
           [rowKey]: valueKey + "_" + value + "_" + newParentKey + "_" + level,
           ___level: level,
           ___isGroup: true,
@@ -49,6 +51,7 @@ export function layeredGroup<T extends AbstractTreeNode>(array: T[], oldGroup: A
         newArray.push({
           children: groupItemList,
           __custom_group__: value,
+          [firstGroupItem.code]: value,
           [rowKey]: valueKey + "_" + value + "_" + newParentKey + "_" + level,
           ___level: level,
           ___isGroup: true,
